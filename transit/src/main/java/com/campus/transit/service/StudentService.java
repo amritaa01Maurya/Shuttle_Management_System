@@ -1,6 +1,7 @@
 package com.campus.transit.service;
 
 import com.campus.transit.entity.Student;
+import com.campus.transit.exception.InsufficientFundsException;
 import com.campus.transit.repository.StudentRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class StudentService {
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
         if(student.getWalletBalance() < fareAmount){
-            throw new RuntimeException("Insufficient wallet balance!");
+            throw new InsufficientFundsException("Trip costs " + fareAmount + " points, but you only have " + student.getWalletBalance() + ". Please recharge.");
         }
 
         // deduct the fare and save
