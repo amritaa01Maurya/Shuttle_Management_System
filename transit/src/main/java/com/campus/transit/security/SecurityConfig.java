@@ -25,7 +25,14 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/students/login").permitAll() // anyone can try to log in
-                        .requestMatchers("/api/admin/**").permitAll() // open for now !!!!!!!!!!(later add admin token)
+                        //  swagger ui permit
+                        .requestMatchers("/v3/api-docs/**",
+                                "/v3/api-docs.yaml",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/swagger-resources/**",
+                                "/webjars/**").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN") // only admin
                         .anyRequest().authenticated() // all other routes require a valid token
                 )
                 // forces our custom token filter to run before standard security checks

@@ -77,4 +77,19 @@ public class StudentService {
 
         return studentRepository.save(student);
     }
+
+    // update wall of student
+    public Student updateWalletBalance(Long studentId, Integer amount) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + studentId));
+
+        int newBalance = student.getWalletBalance() + amount;
+
+        if (newBalance < 0) {
+            throw new IllegalArgumentException("Operation failed: Wallet balance cannot be negative.");
+        }
+
+        student.setWalletBalance(newBalance);
+        return studentRepository.save(student);
+    }
 }

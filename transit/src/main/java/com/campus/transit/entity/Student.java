@@ -23,5 +23,8 @@ public class Student {
     private String password;
 
     @Column(nullable = false)
+    private String role = "STUDENT";
+
+    @Column(nullable = false)
     private  Integer walletBalance = 0;
 }

@@ -22,4 +22,10 @@ public class AdminController {
         studentService.deleteStudentByAdmin(id);
         return "student removed successfully.";
     }
+
+    @PostMapping("/wallet/update")
+    public Student updateStudentWallet(@RequestParam Long studentId, @RequestParam Integer amount) {
+        // amount can be positive (recharge) or negative (penalty/correction)
+        return studentService.updateWalletBalance(studentId, amount);
+    }
 }

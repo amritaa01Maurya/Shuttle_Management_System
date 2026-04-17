@@ -18,8 +18,9 @@ public class JwtUtil {
     // tokens expire after 1 hour
     private final long expirationTime = 360000;
 
-    public String generateToken(String email) {
+    public String generateToken(String email, String role) {
         return Jwts.builder()
+                .claim("role", role)
                 .setSubject(email)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
@@ -34,6 +35,15 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody();
         return claims.getSubject();
+    }
+
+    public String extractRole(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("role", String.class);
     }
 
     public boolean validateToken(String token) {

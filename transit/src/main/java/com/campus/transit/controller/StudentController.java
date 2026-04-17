@@ -27,7 +27,7 @@ public class StudentController {
         Student student = studentService.authenticateStudent(email, password);
 
         // generates
-        String token = jwtUtil.generateToken(student.getEmail());
+        String token = jwtUtil.generateToken(student.getEmail(), student.getRole());
 
         // return token and user data to client
         Map<String, Object> response = new HashMap<>();
