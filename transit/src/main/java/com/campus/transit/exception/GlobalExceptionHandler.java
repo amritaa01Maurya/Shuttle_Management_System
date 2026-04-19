@@ -2,6 +2,7 @@ package com.campus.transit.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -31,6 +32,16 @@ public class GlobalExceptionHandler {
                 request
         );
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex, WebRequest request) {
+        ErrorResponse error = buildErrorResponse(
+                HttpStatus.FORBIDDEN, // 403 status code
+                ex.getMessage(),
+                request
+        );
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
 
     // for unexpected server crashes (500)

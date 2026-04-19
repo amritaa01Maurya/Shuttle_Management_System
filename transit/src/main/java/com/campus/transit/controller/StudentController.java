@@ -37,9 +37,14 @@ public class StudentController {
         return response;
     }
 
-    @PutMapping("/{id}/deduct") // deduct fare
-    public Student payForRide(@PathVariable Long id, @RequestParam int amount) {
-        return studentService.deductFare(id, amount);
-    }
+//    no need of this api(booking api is there)
+//    @PutMapping("/{id}/deduct") // deduct fare
+//    public Student payForRide(@PathVariable Long id, @RequestParam int amount) {
+//        studentService.verifyUserOwnership(id);
+//
+//        return studentService.deductFare(id, amount);
+//    }
+
+
 
 }

@@ -8,6 +8,9 @@ import com.campus.transit.repository.AuditLogRepository;
 import com.campus.transit.repository.StudentRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -112,5 +115,26 @@ public class StudentService {
         auditLogRepository.save(log);
 
         return saveStudent;
+    }
+
+    public void verifyUserOwnership(Long requestedStudentId) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentEmail = authentication.getName();
+
+        // if admin, bypass
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+        if (isAdmin) {
+            return;
+        }
+
+        Student requestedStudent = studentRepository.findById(requestedStudentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found."));
+
+        // if emails don't match, block the request!
+        if (!requestedStudent.getEmail().equals(currentEmail)) {
+            throw new AccessDeniedException("You do not have permission to access this account.");
+        }
     }
 }

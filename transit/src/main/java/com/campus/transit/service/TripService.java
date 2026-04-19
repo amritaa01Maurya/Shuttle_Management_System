@@ -33,6 +33,8 @@ public class TripService {
 
     @Transactional // if wallet deduction fails, this trip will not be saved
     public Trip bookRide(Long studentId, Long startStopId, Long endStopId){
+        // verify
+        studentService.verifyUserOwnership(studentId);
 
         Map<String, Object> estimation = routeService.findBestRouteAndFare(startStopId, endStopId);
         double distance = (double) estimation.get("distanceKm");
@@ -71,6 +73,8 @@ public class TripService {
 
     // to view history (students)
     public List<Trip> getStudentRideHistory(Long studentId) {
+        studentService.verifyUserOwnership(studentId);
+
         return tripRepository.findByStudentIdOrderByBookingTimeDesc(studentId);
     }
 
