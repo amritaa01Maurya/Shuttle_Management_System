@@ -1,8 +1,10 @@
 package com.campus.transit.service;
 
+import com.campus.transit.entity.AuditLog;
 import com.campus.transit.entity.Student;
 import com.campus.transit.exception.InsufficientFundsException;
 import com.campus.transit.exception.ResourceNotFoundException;
+import com.campus.transit.repository.AuditLogRepository;
 import com.campus.transit.repository.StudentRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,12 @@ public class StudentService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AuditLogRepository auditLogRepository;
+
+    @Autowired
+
 
     private static final String ALLOWED_DOMAIN = "@gla.ac.in";
     private static final int INITIAL_WALLET_POINTS = 500;
@@ -78,7 +86,7 @@ public class StudentService {
         return studentRepository.save(student);
     }
 
-    // update wall of student
+    // update wallet of student
     public Student updateWalletBalance(Long studentId, Integer amount) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + studentId));
@@ -90,6 +98,19 @@ public class StudentService {
         }
 
         student.setWalletBalance(newBalance);
-        return studentRepository.save(student);
+        Student saveStudent = studentRepository.save(student);
+
+        // save in the log
+        AuditLog log = new AuditLog();
+        log.setAction("WALLET_UPDATED");
+        if(amount <= 0){
+            log.setDetails("Wallet reduced by " + Math.abs(amount) + ". New balance: " + newBalance);
+        }else{
+            log.setDetails("Wallet adjusted by " + amount + ". New balance: " + newBalance);
+        }
+        log.setPerformedBy("SYSTEM");
+        auditLogRepository.save(log);
+
+        return saveStudent;
     }
 }

@@ -1,8 +1,10 @@
 package com.campus.transit.service;
 
+import com.campus.transit.entity.AuditLog;
 import com.campus.transit.entity.Stop;
 import com.campus.transit.entity.Student;
 import com.campus.transit.entity.Trip;
+import com.campus.transit.repository.AuditLogRepository;
 import com.campus.transit.repository.StopRepository;
 import com.campus.transit.repository.TripRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ public class TripService {
     @Autowired
     private StopRepository stopRepository;
 
+    @Autowired
+    private AuditLogRepository auditLogRepository;
+
     @Transactional // if wallet deduction fails, this trip will not be saved
     public Trip bookRide(Long studentId, Long startStopId, Long endStopId){
 
@@ -43,7 +48,7 @@ public class TripService {
         Stop endStop = stopRepository.findById(endStopId)
                 .orElseThrow(() -> new RuntimeException("End stop not found"));
 
-//     create and save trip details
+        // create and save trip details
         Trip trip = new Trip();
         trip.setStudent(student);
         trip.setStartStop(startStop);
@@ -51,14 +56,24 @@ public class TripService {
         trip.setDistanceKm(distance);
         trip.setFareDeducted(fare);
 
-        return tripRepository.save(trip);
+        Trip saveTrip = tripRepository.save(trip);
+
+        // save log
+        AuditLog log = new AuditLog();
+        log.setAction("RIDE_BOOKED");
+        log.setDetails("Student " + studentId + " traveled from " + startStopId + " to " + endStopId);
+        log.setPerformedBy(student.getEmail());
+        auditLogRepository.save(log);
+
+        return saveTrip;
 
     }
 
-    //    to view history (students)
+    // to view history (students)
     public List<Trip> getStudentRideHistory(Long studentId) {
         return tripRepository.findByStudentIdOrderByBookingTimeDesc(studentId);
     }
+
 
 
 }
