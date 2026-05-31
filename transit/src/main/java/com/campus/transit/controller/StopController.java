@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/admin/stops")
+@RequestMapping("/api/stops")
 public class StopController {
 
     @Autowired

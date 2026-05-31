@@ -3,6 +3,7 @@ package com.campus.transit.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -38,7 +39,12 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/swagger-resources/**",
                                 "/webjars/**").permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN") // only admin
+
+                        .requestMatchers(HttpMethod.GET, "/api/stops", "/api/routes").authenticated()
+                        // only admin
+                        .requestMatchers(HttpMethod.POST, "/api/stops", "/api/routes").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/stops/**", "/api/routes/**").hasAuthority("ADMIN")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated() // all other routes require a valid token
                 )
                 // forces our custom token filter to run before standard security checks

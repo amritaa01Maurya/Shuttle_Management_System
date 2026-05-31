@@ -29,7 +29,6 @@ const Login = () => {
         localStorage.setItem('student_data', JSON.stringify(student));
 
         navigate('/dashboard');
-        console.log("Attempting to login with:", email, password);
         
 
     } catch (err) {

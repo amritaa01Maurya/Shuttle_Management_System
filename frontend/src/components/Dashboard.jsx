@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { BusFront, Wallet, Clock, MapPin, LogOut, User, Activity, CheckCircle2 } from 'lucide-react';
+import { BusFront, Wallet, Clock, User, CheckCircle2 } from 'lucide-react';
 import apiClient from '../api/axiosConfig';
+import Sidebar from './Sidebar';
 
 const Dashboard = () => {
-    const navigate = useNavigate();
     const [student, setStudent] = useState(null);
 
     // ride history
@@ -37,12 +36,6 @@ const Dashboard = () => {
         fetchHistory();
     }, [student]);// render when student changes
 
-    // Handle Logout
-    const handleLogout = () => {
-        localStorage.removeItem('jwt_token');
-        localStorage.removeItem('student_data');
-        navigate('/login');
-    };
 
     if (!student) return <div className="text-white text-center mt-20">Loading...</div>;
 
@@ -54,38 +47,7 @@ const Dashboard = () => {
             <div className="w-full max-w-7xl rounded-[2.5rem] bg-black/20 backdrop-blur-xl border border-white/10 shadow-2xl overflow-hidden flex min-h-[800px]">
 
                 {/* sidebar */}
-                <div className="w-64 border-r border-white/10 p-8 flex flex-col justify-between bg-black/10">
-                    <div>
-                        <div className="flex items-center space-x-2 mb-16">
-                            <BusFront className="w-8 h-8 text-orange-300" />
-                            <span className="font-bold text-xl tracking-wider">TRANSIT</span>
-                        </div>
-
-                        <nav className="space-y-6">
-                            <button className="flex items-center space-x-4 text-orange-300 font-bold w-full text-left">
-                                <Activity className="w-5 h-5" />
-                                <span>Overview</span>
-                            </button>
-                            <button className="flex items-center space-x-4 text-gray-400 hover:text-white transition-colors w-full text-left">
-                                <MapPin className="w-5 h-5" />
-                                <span>Book Ride</span>
-                            </button>
-                            <button className="flex items-center space-x-4 text-gray-400 hover:text-white transition-colors w-full text-left">
-                                <Clock className="w-5 h-5" />
-                                <span>History</span>
-                            </button>
-                            <button className="flex items-center space-x-4 text-gray-400 hover:text-white transition-colors w-full text-left">
-                                <User className="w-5 h-5" />
-                                <span>Profile</span>
-                            </button>
-                        </nav>
-                    </div>
-
-                    <button onClick={handleLogout} className="flex items-center space-x-4 text-red-400 hover:text-red-300 transition-colors w-full text-left">
-                        <LogOut className="w-5 h-5" />
-                        <span>Sign out</span>
-                    </button>
-                </div>
+                <Sidebar/>
 
                 {/* main */}
                 <div className="flex-1 p-10 md:p-16 relative overflow-y-auto">
