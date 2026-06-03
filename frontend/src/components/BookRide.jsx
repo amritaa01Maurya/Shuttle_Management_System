@@ -23,14 +23,8 @@ const BookRide = () => {
             try {
                 const response = await apiClient.get('/stops');
                 setStops(response.data);
-            } catch (err) {
-                // Fallback fake data just in case the backend /stops API isn't built yet
-                setStops([
-                    { id: 1, name: "Main Gate" },
-                    { id: 2, name: "Engineering Block" },
-                    { id: 3, name: "Hostel A" },
-                    { id: 4, name: "Central Library" }
-                ]);
+            } catch (error) {
+                console.error("Failed to fetch stops:", error);
             }
         };
         fetchStops();
@@ -85,7 +79,6 @@ const BookRide = () => {
             setStudent(updatedStudent);
             localStorage.setItem('student_data', JSON.stringify(updatedStudent));
 
-            // Clear form after success
             setStartStop('');
             setEndStop('');
             setEstimatedFare(null);

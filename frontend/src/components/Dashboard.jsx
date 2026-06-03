@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { BusFront, Wallet, Clock, User, CheckCircle2 } from 'lucide-react';
 import apiClient from '../api/axiosConfig';
 import Sidebar from './Sidebar';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
+    const navigate = useNavigate();
     const [student, setStudent] = useState(null);
 
     // ride history
-    const [rideHistory, setRideHistory] = useState([])
+    const [rideHistory, setRideHistory] = useState([]);
     const [isLoadingHistory, setIsLoadingHistory] = useState(true);
 
     // load student data when the dashboard opens
@@ -47,7 +49,7 @@ const Dashboard = () => {
             <div className="w-full max-w-7xl rounded-[2.5rem] bg-black/20 backdrop-blur-xl border border-white/10 shadow-2xl overflow-hidden flex min-h-[800px]">
 
                 {/* sidebar */}
-                <Sidebar/>
+                <Sidebar />
 
                 {/* main */}
                 <div className="flex-1 p-10 md:p-16 relative overflow-y-auto">
@@ -91,7 +93,7 @@ const Dashboard = () => {
                                 <h3 className="text-xl font-bold">Book a Shuttle</h3>
                             </div>
                             <p className="text-gray-400 text-sm mb-6 ml-14">Check routes and reserve your seat instantly.</p>
-                            <button className="ml-14 bg-white text-black px-6 py-2 rounded-full font-bold text-sm self-start hover:bg-gray-200 transition-colors">
+                            <button onClick={() => navigate('/book')} className="ml-14 bg-white text-black px-6 py-2 rounded-full font-bold text-sm self-start hover:bg-gray-200 transition-colors">
                                 Book Now
                             </button>
                         </div>
@@ -112,7 +114,15 @@ const Dashboard = () => {
                         ) : (
                             <div className="space-y-4">
                                 {/* Map through the backend data */}
-                                {rideHistory.map((trip, index) => (
+                                {rideHistory.length > 4 && (
+                                    <button
+                                        onClick={() => navigate('/history')}
+                                        className="w-full mt-4 py-3 text-sm text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-xl transition-colors"
+                                    >
+                                        View All History
+                                    </button>
+                                )}
+                                {rideHistory.slice(0, 4).map((trip, index) => (
                                     <div key={index} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
 
                                         <div className="flex items-center space-x-4">
@@ -120,7 +130,7 @@ const Dashboard = () => {
                                                 <CheckCircle2 className="w-6 h-6 text-emerald-400" />
                                             </div>
                                             <div>
-                                                
+
                                                 <p className="font-bold text-lg"> {trip.startStop.name} →  {trip.endStop.name}</p>
                                                 <p className="text-sm text-gray-400">
                                                     {new Date(trip.bookingTime || Date.now()).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}

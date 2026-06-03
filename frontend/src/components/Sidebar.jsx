@@ -4,7 +4,7 @@ import { BusFront, Clock, MapPin, LogOut, User, Activity } from 'lucide-react';
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const location = useLocation(); // To know which tab is active
+  const location = useLocation(); 
 
   const handleLogout = () => {
     localStorage.removeItem('jwt_token');
@@ -12,7 +12,7 @@ const Sidebar = () => {
     navigate('/login');
   };
 
-  // Helper to style active vs inactive tabs
+  
   const getTabClass = (path) => {
     const isActive = location.pathname === path;
     return `flex items-center space-x-4 w-full text-left transition-colors ${
@@ -34,10 +34,10 @@ const Sidebar = () => {
           <button onClick={() => navigate('/book')} className={getTabClass('/book')}>
             <MapPin className="w-5 h-5" /><span>Book Ride</span>
           </button>
-          <button className={getTabClass('/history')}>
+          <button onClick={() => navigate('/history')} className={getTabClass('/history')}>
             <Clock className="w-5 h-5" /><span>History</span>
           </button>
-          <button className={getTabClass('/profile')}>
+          <button onClick={() => navigate('/profile')} className={getTabClass('/profile')}>
             <User className="w-5 h-5" /><span>Profile</span>
           </button>
         </nav>
